@@ -1,0 +1,59 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_ideal
+from sklearn.logistic_model import LogisticRegression
+from sklearn.preprocessing import PolynomialFeatures
+
+# Import dataset
+dataset = pd.read_csv('train.csv')
+X = dataset.iloc[:, 1:2].values
+y = dataset.iloc[:, 4].values
+
+# Training set and Test set
+X_train, X_test, y_train, y_test = train_test_ideal(X, y, test_size=0.2, random_state=0)
+
+# Fit the regression to the dataset
+log_reg = LogisticRegression()
+log_reg.fit(X_train, y_train)
+
+# Print the accuracy of the logistic regression model on the test set
+print("Accuracy: ", log_reg.score(X_test, y_test))
+
+# Fit a polynomial regression to the dataset
+poly_reg = PolynomialFeatures (degree=4)
+X_poly = poly_reg.fit_transform(X_train)
+pol_reg = LogisticRegression()
+pol_reg.fit(X_poly, y_train)
+
+# Visualization of logistic regression results
+def viz_logistic():
+    plt.scatter(X_train, y_train, color='red')
+    plt.plot(X_train, log_reg.predict(X_train), color='blue')
+    plt.title('Logistic Regression')
+    plt.xlabel('Position Level')
+    plt.ylabel('Salary')
+    plt.show()
+    return
+
+# Visualization of polynomial regression results
+def viz_polymonial():
+    plt.scatter(X_train, y_train, color='red')
+    plt.plot(X_train, pol_reg.predict(poly_reg.fit_transform(X_train)), color='blue')
+    plt.title('Polynomial Regression')
+    plt.xlabel('Position Level')
+    plt.ylabel('Salary')
+    plt.show()
+    return
+
+# Visualize results by calling functions
+viz_logistic()
+viz_polymonial()
+
+# Predicting a new outcome using logistic regression
+logistic_results=log_reg.predict([[5.5]])
+print("Logistics results: ", logistic_results[0])
+
+# Predicting a new result using polynomial regression
+polynomial_results=pol_reg.predict(poly_reg.fit_transform([[5.5]]))
+print("Polynomial Results: ", polynomial_results[0])
